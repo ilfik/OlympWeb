@@ -1,0 +1,50 @@
+﻿@model OlympWeb.Models.Test_result
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Test_result</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.student_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.student_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.test_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.test_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.completion_date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.completion_date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.score)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.score)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id_result }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<OlympWeb.Models.Tests>
+
+@{
+    ViewBag.Title = "Список тестов";
+}
+
+<h2>Список тестов</h2>
+
+<p>
+    @Html.ActionLink("Создать новый тест", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Преподаватель</th>
+            <th>Дата создания</th>
+            <th>Временной лимит (мин)</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.title)</td>
+                <td>@Html.DisplayFor(modelItem => item.description)</td>
+                <td>@(item.Teachers != null ? item.Teachers.FullName : "—")</td>
+                <td>@(item.created_at.HasValue ? item.created_at.Value.ToString("dd.MM.yyyy HH:mm") : "—")</td>
+                <td>@item.time_limit</td>
+                <td>
+                    @Html.ActionLink("Изменить", "Edit", new { id = item.id_test }, new { @class = "btn btn-sm btn-warning" }) |
+                    @Html.ActionLink("Подробнее", "Details", new { id = item.id_test }, new { @class = "btn btn-sm btn-info" }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.id_test }, new { @class = "btn btn-sm btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

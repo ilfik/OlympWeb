@@ -1,0 +1,62 @@
+﻿@model IEnumerable<OlympWeb.Models.Users>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.login)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.password)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.role)
+        </th>
+        <th>
+            Аватар
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.login)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.password)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.role)
+        </td>
+        <td>
+            @if (item.avatar != null && item.avatar.Length > 0)
+            {
+                var base64 = Convert.ToBase64String(item.avatar);
+                var imgSrc = String.Format("data:image/png;base64,{0}", base64);
+                <img src="@imgSrc" alt="avatar" style="width: 50px; height: 50px; border-radius: 50%;" />
+            }
+            else
+            {
+                <span>Нет аватара</span>
+            }
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.id_user }) |
+            @Html.ActionLink("Details", "Details", new { id = item.id_user }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.id_user })
+        </td>
+    </tr>
+}
+
+</table>

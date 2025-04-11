@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="786dd282c990443499c908293af83d96" Name="Diagram1" ZoomLevel="73">
+        <EntityTypeShape EntityType="OlympModel.Answers" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Questions" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Students" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Teachers" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Test_result" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Tests" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlympModel.Users" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="OlympModel.StudentsTest_result" />
+        <AssociationConnector Association="OlympModel.FK_Answers_Questions" />
+        <AssociationConnector Association="OlympModel.FK_Questions_Tests" />
+        <AssociationConnector Association="OlympModel.FK_Students_Users" />
+        <AssociationConnector Association="OlympModel.FK_Teachers_Users" />
+        <AssociationConnector Association="OlympModel.FK_Tests_Teachers" />
+        <AssociationConnector Association="OlympModel.FK_Test_result_Tests" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

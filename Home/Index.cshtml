@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@{ Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+
+<main aria-labelledby="title">
+    <div class="login-container">
+        <h2>Авторизация</h2>
+        <form method="post" action="@Url.Action("Login", "Account")">
+            <input type="text" name="username" class="input-field" placeholder="Логин" required>
+            <div class="password-container">
+                <input type="password" id="password" name="password" class="input-field" placeholder="Пароль" required>
+            </div>
+            <button type="submit" class="login-button">Войти</button>
+        </form>
+    </div>
+</main>
+
+<style>
+    body {
+        background-color: #007BFF; /* Синий фон */
+
+        height: 100vh;
+        text-align: center;
+    }
+
+    .login-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 300px;
+        margin: 100px auto 0 450px;
+    }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .password-container {
+        position: relative;
+    }
+
+    .eye-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px; /* Задайте размер картинки */
+        height: 20px; /* Задайте размер картинки */
+        cursor: pointer;
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #FEC93E; /* Цвет кнопки */
+        border: 2px solid black; /* Черная обводка */
+        border-radius: 5px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+
+    }
+
+        .login-button:hover {
+            background-color: #e6b72a;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Тень при наведении */
+        }
+
+        .login-button:focus {
+            outline: none; /* Убираем стандартную обводку при фокусе */
+        }
+
+    .navbar {
+        width: 100%; /* Делаем навигацию на всю ширину */
+    }
+</style>

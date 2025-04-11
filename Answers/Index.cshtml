@@ -1,0 +1,45 @@
+﻿@model IEnumerable<OlympWeb.Models.Answers>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.question_id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.answer_text)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.is_correct)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.question_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.answer_text)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.is_correct)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.id_answer }) |
+            @Html.ActionLink("Details", "Details", new { id=item.id_answer }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.id_answer })
+        </td>
+    </tr>
+}
+
+</table>

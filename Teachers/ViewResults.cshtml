@@ -1,0 +1,328 @@
+﻿@model IEnumerable<OlympWeb.Models.Test_result>
+
+@{
+    ViewBag.Title = "Результаты студентов";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+        .page-header h2 {
+            color: #007BFF;
+            margin: 0;
+        }
+
+    .search-box input,
+    .column-filter {
+        padding: 8px 14px;
+        border: 2px solid #007BFF;
+        border-radius: 25px;
+        outline: none;
+        width: 220px;
+        transition: 0.3s;
+        font-size: 14px;
+    }
+
+    .column-filter {
+        width: 100%;
+        border-radius: 5px;
+        margin-top: 5px;
+        font-size: 13px;
+    }
+
+        .search-box input::placeholder,
+        .column-filter::placeholder {
+            color: #999;
+        }
+
+        .search-box input:focus,
+        .column-filter:focus {
+            border-color: #FEC93E;
+            box-shadow: 0 0 5px #FEC93E;
+        }
+
+    .export-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .btn-export {
+        background-color: #FEC93E;
+        color: black;
+        border: 1px solid #000;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-export:hover {
+            background-color: #e6b72a;
+        }
+
+    table.results-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+
+        table.results-table th,
+        table.results-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table.results-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        table.results-table img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+    .columns-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #columnsDropdown {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    #toggleColumnsBtn {
+        margin: 0;
+    }
+</style>
+
+<div class="page-header">
+    <h2>Результаты студентов</h2>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Поиск по всей таблице..." />
+    </div>
+</div>
+
+
+<table class="results-table" id="resultsTable">
+    <thead>
+        <tr>
+            <th>Аватар</th>
+            <th>Студент</th>
+            <th>Тест</th>
+            <th>Баллы</th>
+            <th>Дата</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th><input type="text" class="column-filter" data-column="1" placeholder="Фильтр по студенту" /></th>
+            <th><input type="text" class="column-filter" data-column="2" placeholder="Фильтр по тесту" /></th>
+            <th>
+                <input type="number" class="score-filter" id="minScore" placeholder="от" style="width: 45%; display:inline-block;" />
+                <input type="number" class="score-filter" id="maxScore" placeholder="до" style="width: 45%; display:inline-block;" />
+            </th>
+            <th>
+                <input type="date" class="date-filter" id="startDate" style="width: 45%; display:inline-block;" />
+                <input type="date" class="date-filter" id="endDate" style="width: 45%; display:inline-block;" />
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var result in Model)
+        {
+            <tr>
+                <td>
+                    @if (result.Students?.Users?.avatar != null)
+                    {
+                        var base64 = Convert.ToBase64String(result.Students.Users.avatar);
+                        var imgSrc = $"data:image/png;base64,{base64}";
+                        <img src="@imgSrc" alt="avatar" />
+                    }
+                    else
+                    {
+                        <span>Нет фото</span>
+                    }
+                </td>
+                <td>@(result.Students?.first_name ?? "Неизвестно")</td>
+                <td>@result.Tests.title</td>
+                <td>@result.score</td>
+                <td>
+                    @(result.completion_date.HasValue ? result.completion_date.Value.ToString("dd.MM.yyyy HH:mm") : "—")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="columns-container">
+    <form id="exportForm" method="post">
+        <input type="hidden" name="exportData" id="exportData" />
+        <div class="export-buttons">
+            <button type="button" class="btn-export" onclick="exportVisibleData('ExportCsv')">Скачать TXT</button>
+            <button type="button" class="btn-export" onclick="exportVisibleData('ExportWord')">Скачать Word</button>
+        </div>
+    </form>
+
+    <div style="position: relative; display: inline-block;">
+        <button id="toggleColumnsBtn" class="btn-export">Настроить видимость</button>
+        <div id="columnsDropdown">
+            <label><input type="checkbox" class="column-visibility" data-index="0" checked /> Аватар</label><br />
+            <label><input type="checkbox" class="column-visibility" data-index="1" checked /> Студент</label><br />
+            <label><input type="checkbox" class="column-visibility" data-index="2" checked /> Тест</label><br />
+            <label><input type="checkbox" class="column-visibility" data-index="3" checked /> Баллы</label><br />
+            <label><input type="checkbox" class="column-visibility" data-index="4" checked /> Дата</label><br />
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Глобальный поиск по всей таблице
+            $('#searchInput').on('keyup', function () {
+                const value = $(this).val().toLowerCase();
+                $('#resultsTable tbody tr').each(function () {
+                    const rowText = $(this).text().toLowerCase();
+                    $(this).toggle(rowText.indexOf(value) > -1);
+                });
+            });
+
+            // Все фильтры вызывают applyFilters()
+            $('.column-filter, .score-filter, .date-filter').on('input change', function () {
+                applyFilters();
+            });
+
+            // Переключение отображения столбцов через чекбоксы
+            $('.column-visibility').on('change', function () {
+                const colIndex = $(this).data('index');
+                const isVisible = $(this).is(':checked');
+
+                $('#resultsTable tr').each(function () {
+                    $(this).find('th, td').eq(colIndex).toggle(isVisible);
+                });
+            });
+
+            // Открытие/закрытие выпадающего меню для настройки видимости
+            $('#toggleColumnsBtn').on('click', function () {
+                $('#columnsDropdown').toggle(); // Это покажет/скроет меню
+            });
+
+            // Основная функция фильтрации таблицы
+            function applyFilters() {
+                const studentFilter = $('input[data-column="1"]').val()?.toLowerCase() || '';
+                const testFilter = $('input[data-column="2"]').val()?.toLowerCase() || '';
+                const minScore = parseFloat($('#minScore').val()) || -Infinity;
+                const maxScore = parseFloat($('#maxScore').val()) || Infinity;
+                const startDate = $('#startDate').val() ? new Date($('#startDate').val()) : null;
+                const endDate = $('#endDate').val() ? new Date($('#endDate').val()) : null;
+
+                $('#resultsTable tbody tr').each(function () {
+                    const tds = $(this).find('td');
+                    const student = tds.eq(1).text().toLowerCase();
+                    const test = tds.eq(2).text().toLowerCase();
+                    const score = parseFloat(tds.eq(3).text()) || 0;
+
+                    const dateText = tds.eq(4).text().trim();
+                    const dateParts = dateText.split(" ")[0].split(".");
+                    const rowDate = dateParts.length === 3 ? new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`) : null;
+
+                    let visible = true;
+
+                    if (student.indexOf(studentFilter) === -1) visible = false;
+                    if (test.indexOf(testFilter) === -1) visible = false;
+                    if (score < minScore || score > maxScore) visible = false;
+                    if (startDate && rowDate && rowDate < startDate) visible = false;
+                    if (endDate && rowDate && rowDate > endDate) visible = false;
+
+                    $(this).toggle(visible);
+                });
+            }
+
+            // Экспорт видимых данных в JSON для отправки формы
+            window.exportVisibleData = function (actionName) {
+                const exportRows = [];
+
+                // Получаем только видимые строки, которые прошли через фильтры
+                $('#resultsTable tbody tr:visible').each(function () {
+                    const rowData = [];
+
+                    // Собираем данные только для видимых ячеек (в случае скрытых столбцов)
+                    $(this).find('td:visible').each(function () {
+                        rowData.push($(this).text().trim());
+                    });
+
+                    if (rowData.length > 0) {
+                        exportRows.push(rowData);
+                    }
+                });
+
+                // Проверяем, если есть отфильтрованные строки, экспортируем их
+                if (exportRows.length > 0) {
+                    $('#exportData').val(JSON.stringify(exportRows));
+                    $('#exportForm').attr('action', `/Teachers/${actionName}`);
+                    $('#exportForm').submit();
+                } else {
+                    alert("Нет данных для экспорта.");
+                }
+            };
+            function collectVisibleTableData(tableId) {
+                var data = [];
+                var table = document.getElementById(tableId);
+                var headers = [];
+
+                // Сохраняем только видимые заголовки
+                $(table).find("thead th").each(function (index) {
+                    if ($(this).is(':visible')) {
+                        headers.push(index);
+                    }
+                });
+
+                // Заголовок строки
+                var headerRow = [];
+                headers.forEach(function (i) {
+                    headerRow.push($(table).find("thead th").eq(i).text().trim());
+                });
+                data.push(headerRow);
+
+                // Данные строк
+                $(table).find("tbody tr").each(function () {
+                    var row = [];
+                    headers.forEach(function (i) {
+                        row.push($(this).find("td").eq(i).text().trim());
+                    }, this);
+                    data.push(row);
+                });
+
+                return data;
+            }
+
+
+
+
+        });
+    </script>
+}
